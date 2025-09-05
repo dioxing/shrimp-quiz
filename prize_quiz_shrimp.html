@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🦐 有奖竞猜：我多久能吃完一袋虾？</title>
+  <style>
+    :root{
+      --primary:#ff7f50;
+      --bg:#fff8f3;
+      --text:#2c3e50;
+      --card:#ffffff;
+      --border:#ffe1d2;
+      --success:#2ecc71;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color:var(--text);
+      background:linear-gradient(180deg,var(--bg),#fff);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .card{
+      width:100%;
+      max-width:680px;
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:24px;
+      box-shadow:0 8px 24px rgba(255,127,80,.15);
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 12px;
+      font-size:12px;
+      border-radius:999px;
+      background:#fff4ee;
+      color:#c24e21;
+      border:1px solid var(--border);
+    }
+    h1{
+      margin:12px 0 8px;
+      font-size:28px;
+      line-height:1.2;
+      color:#e3622b;
+    }
+    p.lead{
+      margin:0 0 16px;
+      color:#5d6d7e;
+    }
+    .prize{
+      margin:12px 0 24px;
+      padding:12px 14px;
+      background:#f3fff6;
+      border:1px solid #d5f5e3;
+      border-radius:12px;
+      font-weight:600;
+      color:#1e8449;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:12px;
+      margin:12px 0 8px;
+    }
+    @media (min-width:520px){
+      .grid{ grid-template-columns: repeat(3, 1fr); }
+    }
+    button.option{
+      width:100%;
+      padding:14px 12px;
+      background:#fff;
+      border:1.5px solid var(--border);
+      border-radius:12px;
+      font-size:16px;
+      cursor:pointer;
+      transition:all .18s ease;
+    }
+    button.option:hover{ border-color:var(--primary); transform:translateY(-1px); }
+    button.option.active{ border-color:var(--primary); background:#fff6f1; box-shadow:0 6px 16px rgba(255,127,80,.12); }
+    .fields{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+      margin-top:16px;
+    }
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .field input, .field textarea{
+      border:1.5px solid var(--border);
+      border-radius:10px;
+      padding:12px 12px;
+      font-size:15px;
+      outline:none;
+    }
+    .field input:focus, .field textarea:focus{ border-color:var(--primary); box-shadow:0 0 0 4px rgba(255,127,80,.12); }
+    .actions{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;
+    }
+    .btn{
+      padding:12px 16px;
+      border:0;
+      border-radius:12px;
+      font-size:15px;
+      cursor:pointer;
+    }
+    .btn-primary{ background:var(--primary); color:#fff; }
+    .btn-ghost{ background:#fff; border:1.5px solid var(--border); }
+    .hint{
+      font-size:12px;
+      color:#7f8c8d;
+      margin-top:6px;
+    }
+    .status{
+      margin-top:14px;
+      font-size:14px;
+      display:none;
+    }
+    .status.ok{ color:var(--success); display:block; }
+    .status.err{ color:#c0392b; display:block; }
+    .footer{
+      margin-top:18px;
+      font-size:12px;
+      color:#95a5a6;
+      text-align:center;
+    }
+    .divider{ height:1px; background:var(--border); margin:16px 0; }
+  </style>
+</head>
+<body>
+  <main class="card" role="main">
+    <div class="badge" aria-label="活动类型">🧧 有奖竞猜</div>
+    <h1>猜猜看：我多久能吃完一袋虾？🦐</h1>
+    <p class="lead">在下面选择你心中的答案（周一～周日）。提交后参与抽奖！</p>
+
+    <div class="prize" role="note">
+      🎁 奖励：<strong>一袋虾（不变质版）</strong>
+    </div>
+
+    <form id="quizForm" autocomplete="on">
+      <div class="grid" role="group" aria-label="选项">
+        <button class="option" type="button" data-value="周一">周一</button>
+        <button class="option" type="button" data-value="周二">周二</button>
+        <button class="option" type="button" data-value="周三">周三</button>
+        <button class="option" type="button" data-value="周四">周四</button>
+        <button class="option" type="button" data-value="周五">周五</button>
+        <button class="option" type="button" data-value="周六">周六</button>
+        <button class="option" type="button" data-value="周日">周日</button>
+      </div>
+
+      <div class="fields">
+        <div class="field">
+          <label for="nickname">昵称（用于公示中奖名单，可选）</label>
+          <input id="nickname" name="nickname" placeholder="例如：小虾侠">
+        </div>
+        <div class="field">
+          <label for="contact">联系方式（仅用于兑奖，可选）</label>
+          <input id="contact" name="contact" placeholder="手机号 / 微信 / 邮箱">
+          <div class="hint">我们只在你中奖时联系你；数据仅保存在你的浏览器或你配置的接收端。</div>
+        </div>
+        <div class="field">
+          <label for="remarks">备注（可选）</label>
+          <textarea id="remarks" name="remarks" rows="2" placeholder="想说点啥？"></textarea>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" type="submit">提交我的竞猜</button>
+        <button class="btn btn-ghost" type="button" id="exportBtn">导出CSV</button>
+        <button class="btn btn-ghost" type="button" id="resetBtn" title="清除此设备的提交状态">清除本机记录</button>
+      </div>
+      <div class="status" id="status"></div>
+    </form>
+
+    <div class="divider"></div>
+    <div class="footer">
+      <span>提示：此页面可离线使用。默认把数据存到浏览器本地。</span><br>
+      <span>如需把提交同步到你的表单/服务，请在源码中配置 <code>WEBHOOK_URL</code>。</span>
+    </div>
+  </main>
+
+  <script>
+    // —— 可选：把这里的地址改成你的收件端（如 Formspree, 自建 API, Google Apps Script Web App 等）——
+    const WEBHOOK_URL = ""; // 例如 "https://example.com/collect"
+    // ————————————————————————————————————————————————————————————————
+
+    const form = document.getElementById('quizForm');
+    const exportBtn = document.getElementById('exportBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const statusEl = document.getElementById('status');
+    const optionButtons = Array.from(document.querySelectorAll('.option'));
+
+    // 状态键名
+    const STORAGE_KEY_ENTRIES = 'shrimp_quiz_entries_v1';
+    const STORAGE_KEY_VOTED = 'shrimp_quiz_voted_v1';
+
+    let selected = null;
+
+    optionButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        optionButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selected = btn.dataset.value;
+      });
+    });
+
+    function getEntries(){
+      try{
+        return JSON.parse(localStorage.getItem(STORAGE_KEY_ENTRIES)) || [];
+      }catch(e){
+        return [];
+      }
+    }
+    function setEntries(entries){
+      localStorage.setItem(STORAGE_KEY_ENTRIES, JSON.stringify(entries));
+    }
+
+    // 简单防多投：同一设备仅一次
+    function hasVoted(){
+      return localStorage.getItem(STORAGE_KEY_VOTED) === '1';
+    }
+    function markVoted(){
+      localStorage.setItem(STORAGE_KEY_VOTED, '1');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if(!selected){
+        showStatus('请先选择一个选项（周一到周日）。', false);
+        return;
+      }
+      if(hasVoted()){
+        showStatus('你已在本设备提交过啦，感谢参与 🧡', false);
+        return;
+      }
+      const nickname = document.getElementById('nickname').value.trim();
+      const contact = document.getElementById('contact').value.trim();
+      const remarks = document.getElementById('remarks').value.trim();
+      const timestamp = new Date().toISOString();
+
+      const entry = { day:selected, nickname, contact, remarks, timestamp };
+
+      // 1) 存本地
+      const entries = getEntries();
+      entries.push(entry);
+      setEntries(entries);
+      markVoted();
+
+      // 2) 可选：发送到你的后台/表单
+      let remoteOK = true;
+      if(WEBHOOK_URL){
+        try{
+          const res = await fetch(WEBHOOK_URL, {
+            method:'POST',
+            headers:{ 'Content-Type':'application/json' },
+            body:JSON.stringify(entry)
+          });
+          remoteOK = res.ok;
+        }catch(err){
+          remoteOK = false;
+        }
+      }
+
+      // 3) 反馈
+      optionButtons.forEach(b => b.disabled = true);
+      e.target.querySelector('button[type="submit"]').disabled = true;
+
+      showStatus(remoteOK ? '提交成功！祝你好运～' : '已提交（本地保存）。远端同步失败可稍后再试。', true);
+    });
+
+    // CSV 导出
+    exportBtn.addEventListener('click', () => {
+      const entries = getEntries();
+      if(entries.length === 0){
+        showStatus('当前没有可导出的数据。', false);
+        return;
+      }
+      const header = ['day','nickname','contact','remarks','timestamp'];
+      const rows = entries.map(e => [e.day, e.nickname, e.contact, e.remarks, e.timestamp]);
+      const csv = [header, ...rows].map(r => r.map(escapeCSV).join(',')).join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'shrimp_quiz_entries.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showStatus('已导出 CSV。', true);
+    });
+
+    // 清除本机状态（便于测试）
+    resetBtn.addEventListener('click', () => {
+      localStorage.removeItem(STORAGE_KEY_VOTED);
+      // 不清 entries，避免误删；如需清空全部数据见下：
+      // localStorage.removeItem(STORAGE_KEY_ENTRIES);
+      optionButtons.forEach(b => { b.disabled=false; b.classList.remove('active'); });
+      form.querySelector('button[type="submit"]').disabled = false;
+      selected = null;
+      showStatus('已清除本机提交状态。', true);
+    });
+
+    function showStatus(msg, ok){
+      statusEl.textContent = msg;
+      statusEl.className = 'status ' + (ok ? 'ok':'err');
+    }
+
+    function escapeCSV(val){
+      if(val==null) return '';
+      const s = String(val).replace(/\r?\n/g,' ');
+      if(/[",]/.test(s)) return '"' + s.replace(/"/g,'""') + '"';
+      return s;
+    }
+  </script>
+</body>
+</html>
