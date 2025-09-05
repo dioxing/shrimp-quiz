@@ -128,13 +128,6 @@
     }
     .status.ok{ color:var(--success); display:block; }
     .status.err{ color:#c0392b; display:block; }
-    .footer{
-      margin-top:18px;
-      font-size:12px;
-      color:#95a5a6;
-      text-align:center;
-    }
-    .divider{ height:1px; background:var(--border); margin:16px 0; }
   </style>
 </head>
 <body>
@@ -181,14 +174,10 @@
       </div>
       <div class="status" id="status"></div>
     </form>
-
-    
   </main>
 
   <script>
-    // —— 可选：把这里的地址改成你的收件端（如 Formspree, 自建 API, Google Apps Script Web App 等）——
-    const WEBHOOK_URL = ""; // 例如 "https://example.com/collect"
-    // ————————————————————————————————————————————————————————————————
+    const WEBHOOK_URL = ""; 
 
     const form = document.getElementById('quizForm');
     const exportBtn = document.getElementById('exportBtn');
@@ -196,7 +185,6 @@
     const statusEl = document.getElementById('status');
     const optionButtons = Array.from(document.querySelectorAll('.option'));
 
-    // 状态键名
     const STORAGE_KEY_ENTRIES = 'shrimp_quiz_entries_v1';
     const STORAGE_KEY_VOTED = 'shrimp_quiz_voted_v1';
 
@@ -221,7 +209,6 @@
       localStorage.setItem(STORAGE_KEY_ENTRIES, JSON.stringify(entries));
     }
 
-    // 简单防多投：同一设备仅一次
     function hasVoted(){
       return localStorage.getItem(STORAGE_KEY_VOTED) === '1';
     }
@@ -246,13 +233,11 @@
 
       const entry = { day:selected, nickname, contact, remarks, timestamp };
 
-      // 1) 存本地
       const entries = getEntries();
       entries.push(entry);
       setEntries(entries);
       markVoted();
 
-      // 2) 可选：发送到你的后台/表单
       let remoteOK = true;
       if(WEBHOOK_URL){
         try{
@@ -267,14 +252,12 @@
         }
       }
 
-      // 3) 反馈
       optionButtons.forEach(b => b.disabled = true);
       e.target.querySelector('button[type="submit"]').disabled = true;
 
       showStatus(remoteOK ? '提交成功！祝你好运～' : '已提交（本地保存）。远端同步失败可稍后再试。', true);
     });
 
-    // CSV 导出
     exportBtn.addEventListener('click', () => {
       const entries = getEntries();
       if(entries.length === 0){
@@ -296,11 +279,8 @@
       showStatus('已导出 CSV。', true);
     });
 
-    // 清除本机状态（便于测试）
     resetBtn.addEventListener('click', () => {
       localStorage.removeItem(STORAGE_KEY_VOTED);
-      // 不清 entries，避免误删；如需清空全部数据见下：
-      // localStorage.removeItem(STORAGE_KEY_ENTRIES);
       optionButtons.forEach(b => { b.disabled=false; b.classList.remove('active'); });
       form.querySelector('button[type="submit"]').disabled = false;
       selected = null;
